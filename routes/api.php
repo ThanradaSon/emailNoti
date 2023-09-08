@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
-use App\Notifications\ResetPasswordNotification;
-use App\Notifications\WelcomeRiderMailNotification;
-use App\Notifications\WelcomeUserMailNotification;
+use App\Mail\ResetPasswordEmail;
+use App\Mail\WelcomeRiderEmail;
+use App\Mail\WelcomeUserEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,29 +23,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/welcome/user/{id}', function ($id) {
+Route::get('/welcome/user/{toEmail}', function ($toEmail) {
 
-    $user = User::find($id);      // จริงๆต้องเช็คว่าเป็น user ที่ login อยู่จริงๆ
-    // $user = auth()->user();
-    $user->notify(new WelcomeUserMailNotification());
+    Mail::to($toEmail)->send(new WelcomeUserEmail());
 
     return response()->json(['message' => 'Welcome user email notification sent.']);
 });
 
-Route::get('/welcome/rider/{id}', function ($id) {
+Route::get('/welcome/rider/{toEmail}', function ($toEmail) {
 
-    $user = User::find($id);          // จริงๆต้องเช็คว่าเป็น rider ที่ login อยู่จริงๆ
-    // $user = auth()->user();
-    $user->notify(new WelcomeRiderMailNotification());
+    Mail::to($toEmail)->send(new WelcomeRiderEmail());
 
     return response()->json(['message' => 'Welcome rider email notification sent.']);
 });
 
-Route::get('/reset-password/{id}', function ($id) {
+Route::get('/reset-password/{toEmail}', function ($toEmail) {
 
-    $user = User::find($id);          // จริงๆต้องเช็คว่าเป็น เมลหรือชื่อนั้น ที่ขอ reset password อยู่จริงๆ
-    // $user = auth()->user();
-    $user->notify(new ResetPasswordNotification());
+    Mail::to($toEmail)->send(new ResetPasswordEmail());
 
     return response()->json(['message' => 'Reset password email notification sent.']);
 });
